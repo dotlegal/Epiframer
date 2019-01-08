@@ -1,0 +1,40 @@
+to-report current-theory
+     let channel-theory [
+      [[ "p" "p" "?"]["n" "p" "?"]["u" "n" "u"]["p" "p" "u"]]
+      [[ "p" "p" "u"]["p" "p" "u"]["u" "p" "u"]["p" "p" "u"]]
+      [[ "p" "p" "u"]["n" "n" "u"]["u" "n" "u"]["p" "p" "u"]]
+      [[ "p" "p" "?"]["n" "p" "?"]["u" "n" "u"]["p" "p" "u"]]   
+      [[ "p" "p" "?"]["n" "p" "?"]["u" "n" "u"]["p" "p" "u"]]
+      [[ "p" "p" "u"]["n" "n" "u"]["u" "n" "u"]["p" "p" "u"]]
+      [[ "p" "?" "u"]["n" "p" "u"]["u" "p" "u"]["p" "p" "u"]]
+      [[ "p" "p" "?"]["n" "p" "?"]["u" "n" "u"]["p" "p" "u"]]]
+     report channel-theory
+end
+
+;
+; sndr x's institutional resource values in situation type y
+;
+;                         letter/email/eform    
+;                              l   m   f   
+;                             ___________
+;   T | security/order   aa   "p" "p" "?"     
+;   A | collective       ab   "n" "p" "?" 
+;   G | capabilities     ba   "u" "n" "p"             
+;     | autonomy/rights  bb   "n" "n" "n"     
+;
+; code conversion rules:
+;    ? (don't know) [ set random 3 - 1 ]
+;    m (mandatory)  [ set 2 ]
+;    p (preferred)  [ set random 2 + 1 ]
+;    n (neutral)    [ set 1 ]
+;    u (unfavored)  [ set random 2 - 2 ]
+;    f (forbidden)  [ set -2 ]           
+;                                                     
+; sndr x's individual scores in situation y (e.g.)     
+;     letter/email/eform      l     m      f           
+;     security/order   aa  [ 1|2   1|2  -1|0|1 ]       
+;     collective       ab  [  0    1|2  -1|0|1 ]        
+;     capabilities     ba  [-2|-1   0     1|2  ]
+;     autonomy/rights  bb  [  0     0      0   ]
+
+

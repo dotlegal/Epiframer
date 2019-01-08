@@ -1,0 +1,194 @@
+to setup-run ;; for any run
+set all-msgs 0 set all-lettrs 0 set all-emails 0 set all-eforms 0
+set all-Kmsgs 0 set all-Klettrs 0 set all-Kemails 0 set all-Keforms 0
+set all-KoutR [0 0 0 0] set all-KinsR [0 0 0 0] set all-KJR [0 0 0 0]
+set all--KJR [0 0 0 0] set all-KTR [0 0 0 0] set all--KTR [0 0 0 0]
+end
+to setup-gen ;; for any generation
+set gen-msgs 0 set gen-lettrs 0 set gen-emails 0 set gen-eforms 0
+set gen-Kmsgs 0 set gen-Klettrs 0 set gen-Kemails 0 set gen-Keforms 0
+set gen-KoutR [0 0 0 0] set gen-KinsR [0 0 0 0] set gen-KJR [0 0 0 0]
+set gen--KJR [0 0 0 0] set gen-KTR [0 0 0 0] set gen--KTR [0 0 0 0]
+end
+to setup-per ;; for any period period
+set per-msgs 0 set per-lettrs 0 set per-emails 0 set per-eforms 0
+set per-Kmsgs 0 set per-Klettrs 0 set per-Kemails 0 set per-Keforms 0
+set per-KoutR [0 0 0 0] set per-KinsR [0 0 0 0] set per-KJR [0 0 0 0]
+set per--KJR [0 0 0 0] set per-KTR [0 0 0 0] set per--KTR [0 0 0 0]
+end
+to setup-all-tags-list
+set all-tags [] let tag-elements ["a" "b"]
+foreach tag-elements [ i -> foreach tag-elements [ j ->
+set all-tags lput (list i j) all-tags ]]
+;chck: output-print all-tags
+set #tags length all-tags
+end
+to setup-all-cndts-list
+set all-cndtns [] let cndt-els ["a" "b"]
+foreach cndt-els [ i -> foreach cndt-els [ j ->
+set all-cndtns lput (list i j) all-cndtns ]]
+set #cndtns length all-cndtns
+;chck: output-print all-cndtns
+end
+to setup-all-pttrns
+set all-pttrns
+( list 
+    "0 jdg-trst (appoint)      " 
+    "1 trst-prs (publish)      " 
+    "2 crdtr-trst (reg. req.)  " 
+    "3 trst-crdtr (reg.decisn) " 
+    "4 trst-crdtr (req.cmmnt.) " 
+    "5 crdtr-trst (plan)       " 
+    "6 trst-jdg (green light)  " 
+    "7 jdg-trst (decision)     ")
+set #pttrns length all-pttrns ;(when parametrized)
+;  (i) judge appoints trustee (0)
+;  (ii) trustee calls creditors to register (1)
+;  (iii) creditors request registration (2)
+;  (iv) trustee decides on registration (...)
+;  (v) trustee calls for comments on plan (3)
+;  (vi) creditors comment on plan (4)
+;  (vii) trustee calls for judge's support (5)
+;  (viii) judge gives decision (...)
+
+end
+to setup-all-strtgs
+set all-strtgs ["lttr" "ml" "frm"]
+set #strtgs length all-strtgs ;(when parametrized)
+;chck: output-print all-strtgs
+end
+to setup-inds ;; [brand name mypatch born live? purse tag cndt memory]
+;; brands ["cvlns" "jdgs" "trsts" "bnkrts" "crdtrs"]
+let cntr1 0 let cntr2 0 let rowcols sqrt ( #ptchs )
+create-inds #inds [
+setxy cntr1 cntr2 set mypatch patch-here set name who set born ticks
+set brand "cvln" set live? true set memory [] set color grey set size 1
+set tag one-of all-tags set cndt one-of all-cndtns set purse [0 0 0 0]
+set cntr1 cntr1 + 1 if (cntr1 = rowcols) [set cntr1 0 set cntr2 cntr2 + 1]
+if ( cntr2 = rowcols ) [ set cntr2 0 ]
+set r-w-s res-wrths-strtgs
+set r-v-s transcode (list r-w-s) set r-v-t transpose r-v-s ]
+end
+to setup-insts end
+to setup-sits end
+to setup-MSSGS create-MSSGS 1
+[ set message (list "dpl msgnum sndr ddrss sp stmp channel content") ]
+end
+to setup-brands
+do-setup-jdgs do-setup-trsts do-setup-bnkrts do-setup-crdtrs do-setup-prss
+end
+to do-setup-jdgs ;;
+ask inds with [brand = "jdg" ] [
+ask my-in-links [die]
+set brand "cvln" set shape "default" set size 1 ; set color grey
+set cndt one-of all-cndtns set tag one-of all-tags]
+repeat #jdgs [
+ask one-of inds with [brand = "cvln" and distance patch 26 23 < 4 ] [
+set brand "jdg" set shape "face neutral" set color orange set size 1]]
+if (leveldiv? = true) [ leveldiv ]
+end
+to leveldiv ;; spread cndts over judges
+ask inds with [brand = "jdg" ] [ask my-in-links [die]
+set brand "cvln" set shape "default" set size 1 set color grey
+set cndt one-of all-cndtns set tag one-of all-tags]
+let quarts floor (8 / 4) repeat quarts [
+ask one-of inds with [ brand = "cvln" and distance patch 26 23 < 4
+and tag = ["a" "a"]] [ set brand "jdg" set shape "face neutral"
+set color orange set size 1]
+ask one-of inds with [ brand = "cvln" and distance patch 26 23 < 4
+and tag = ["a" "b"]] [ set brand "jdg" set shape "face neutral"
+set color orange set size 1]
+ask one-of inds with [ brand = "cvln" and distance patch 26 23 < 4
+and tag = ["b" "a"]] [ set brand "jdg" set shape "face neutral"
+set color orange set size 1]
+ask one-of inds with [ brand = "cvln" and distance patch 26 23 < 4
+and tag = ["b" "b"]] [ set brand "jdg" set shape "face neutral"
+set color orange set size 1]]
+end
+to do-setup-trsts
+ask inds with [brand = "trst" ] [ ask my-out-links [ die ]
+set brand "cvln" set shape "default" set size 1 ]; set color grey]
+repeat #trsts [
+ask one-of inds with [brand = "cvln" and distance patch 26 7 < 4 ] [
+set brand "trst" set shape "face happy" set color yellow set size 1
+create-link-with (one-of inds with [brand = "jdg"]) [set color yellow]]]
+end
+to do-setup-bnkrts
+ask inds with [brand = "bnkrt"] [ ask my-out-links [ die ]
+set brand "cvln" set shape "default" set size 1 set color grey]
+repeat #bnkrts [ask one-of inds with [
+brand = "cvln" and distance patch 10 16 < 10 ] [
+set brand "bnkrt" set shape "face sad" set color cyan set size 1
+create-link-with (one-of inds with [brand = "trst"]) [set color white]]]
+end
+to do-setup-crdtrs
+ask inds with [brand = "crdtr"] [
+set brand "cvln" set shape "default" set color grey set size 1 ]
+ask inds with [brand = "bnkrt"] [let thispatch mypatch let thisbnkrt who
+repeat #crdtrs [ ask one-of inds with [
+distance thispatch < 4 and brand = "cvln" ][
+set brand "crdtr" set color white set size 1
+create-link-with (ind thisbnkrt) [ set color white ]]]]
+end
+to do-setup-prss
+ask inds with [brand = "prss"] [
+set brand "cvln" set shape "default" set color grey set size 1 ]
+ask one-of inds with [brand = "cvln" and distance patch 16 16 < 2][
+set brand "prss"]
+end
+;;do reports @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+to-report transcode [ list-in ]
+set list-in item 0 list-in
+let list-out list-in
+let level0 0 let level1 0 let level2 0
+foreach list-out [ p -> foreach p [ q -> foreach q [ i ->
+if i = "?" [ set i random 3 - 1 ] ;; ? (don’t know)
+if i = "m" [ set i 2 ] ;; m (mandatory)
+if i = "p" [ set i random 2 + 1 ] ;; p (preferred)
+if i = "n" [ set i 0 ] ;; n (neutral)
+if i = "u" [ set i random 2 - 2 ] ;; u (unfavored)
+if i = "f" [ set i -2 ] ;; f (forbidden)
+set q replace-item level2 q i set level2 level2 + 1 ]
+set p replace-item level1 p q set level1 level1 + 1 set level2 0 ]
+set list-out replace-item level0 list-out p
+set level0 level0 + 1 set level1 0 ]
+report list-out
+end
+to-report genshift
+if gen-tcks > 0 and ticks mod gen-tcks = 0 [report 0] report 1
+end
+to-report KEI if cpttrn = 0 or cpttrn = 6 or cpttrn = 7 [report true] report false end
+to-report kscale [lst] report map [ x -> precision (x / 1000) 1 ] lst end
+to-report sm-sblsts [lst] ;; reports by-element-sum of equal-length sublists
+report map [ i -> sum (map [li -> item i li] lst) ] range length item 0 lst
+end
+to-report add-to-purse [lst] ;; reports by-element-sum of equal-length sublists
+report map [ i -> sum (map [li -> item i li] lst) ] range length item 0 lst
+end
+to-report transpose [lst-mat]
+let mat-lst [] let cntr 0 let ll length lst-mat
+repeat ll [ let row item cntr lst-mat let mv matrix:from-row-list row
+let tv matrix:transpose mv let tvm matrix:to-row-list tv
+set mat-lst lput tvm mat-lst set cntr cntr + 1 ] report mat-lst
+end
+to-report max-pos [lst]
+let i length lst let cntr -1 let max-list [] let mxvl max lst
+repeat i [ set cntr cntr + 1
+if item cntr lst = mxvl [set max-list lput cntr max-list]]
+report one-of max-list
+end
+to-report add-value-to-list [lst] ;; reports by-element-sum e.g.: [1 [1 2 3]]
+report map [ i -> item 0 lst + i ] item 1 lst
+end
+to-report jdg-divs
+report (list " " count inds with [ brand = "jdg" and tag = ["a" "a"]] " "
+count inds with [ brand = "jdg" and tag = ["a" "b"]] " "
+count inds with [ brand = "jdg" and tag = ["b" "a"]] " "
+count inds with [ brand = "jdg" and tag = ["b" "b"]] " ")
+end
+to-report trst-divs
+report (list " " count inds with [ brand = "trst" and tag = ["a" "a"]] " "
+count inds with [ brand = "trst" and tag = ["a" "b"]] " "
+count inds with [ brand = "trst" and tag = ["b" "a"]] " "
+count inds with [ brand = "trst" and tag = ["b" "b"]] " ")
+end
